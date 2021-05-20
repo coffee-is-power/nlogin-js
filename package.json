@@ -1,5 +1,5 @@
 {
-  "name": "nlogin-js",
+  "name": "nlogin",
   "version": "1.0.0",
   "description": "NLogin database wrapper for node js",
   "main": "index.js",

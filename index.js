@@ -1,0 +1,1 @@
+const algorithm = require("./algorithm")
