@@ -1,4 +1,7 @@
 const crypto = require('crypto')
+var crypt = require('crypt3/sync');
+const sprintf = require('sprintf-js').sprintf
+const uniqid = require('uniqid')
 function mt_rand (min, max) { // eslint-disable-line camelcase
     //  discuss at: https://locutus.io/php/mt_rand/
     // original by: Onno Marsman (https://twitter.com/onnomarsman)
@@ -29,16 +32,51 @@ function hash(method, passwd){
 function sha256(passwd){
     return hash("sha256", passwd);
 }
+const saltPrefix = "2a";
+const defaultCost = 14;
+const bcryptSaltLength = 22;
+function base64_encode(str){
+    return Buffer.from(str,"base64").toString();
+}
+class BCrypt extends Algorithm{
+    generateRandomSalt(){
+        const seed  = uniqid(mt_rand())
+        var salt = base64_encode(seed)
+        salt.replace("+", ".")
+        return salt.substr(0, bcryptSaltLength)
+    }
+    hash(passwd, cost = null){
+        if(cost = null){
+            cost = defaultCost;
+        }
+        const salt = this.generateRandomSalt()
+        var hashString = this.generateHashString(parseInt(cost), salt)
+        return crypt(passwd, hashString)
+
+    }
+    hash(passwd){
+        hash(passwd,defaultCost)
+    }
+    isValid(passwd, hash){
+        return crypt(passwd, hash) ==hash
+    }
+    generateHashString(cost,salt){
+        return sprintf('$%s$%02d$%s$', saltPrefix, cost, salt);
+
+    }
+}
+
 class AuthMe extends Algorithm{
 
     constructor(){
         super()
+        
         this.CHARS = AuthMe.initCharRange();
     }
     
     hash(passwd){
         var salt = this.generateSalt()
-        return "$SHA$"+salt+"$"+sha256(sha256(passwd)+salt)+"$AUTHME"
+        return `$SHA$${salt}$${sha256(sha256(passwd) + salt)}$AUTHME`
     }
 
     isValid(passwd, hash){
@@ -60,7 +98,30 @@ class AuthMe extends Algorithm{
         return [0,1,2,3,4,5,6,7,8,9,"a","b","c","d","e","f"]
     }
 }
+const sha256chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+const sha256saltLength = 24
+class SHA256 extends Algorithm{
+    hash(passwd){
+        const salt = generateSalt()
+        return `$SHA256$${sha256(sha256(passwd) + salt)}@${salt}`
+    }
+    generateSalt(){
+        const maxCharIndex = sha256chars.length-1
+        var salt = "";
+        for(var i=0; i<sha256saltLength; i++){
+            salt += sha256chars[mt_rand(0,maxCharIndex)]
+        }
+        return salt
+    }
+    isValid(passwd, hash){
+        var parts = hash.split("$")
+        var saltParts = hash.split("@")
+        return parts.length == 3 && saltParts.length == 2 && parts[2] == sha256(sha256(passwd)+saltParts[1])
+    }
+}
 module.exports = {
     Algorithm,
-    AuthMe
+    AuthMe,
+    BCrypt,
+    SHA256
 }
