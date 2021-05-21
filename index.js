@@ -143,3 +143,6 @@ class nLogin {
     }
 }
 module.exports = nLogin
+var nloginInstance = new nLogin("144.91.78.8", "patzadmin","Ratos4Ever!","s12_nlogin", (err)=>{
+    nloginInstance.getHashedPassword("xtiagodinisx", console.log)
+})
