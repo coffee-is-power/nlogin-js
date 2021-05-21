@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "nlogin": "^1.0.3"
+    "nlogin": "^1.0.4"
   }
 }
