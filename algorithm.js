@@ -1,10 +1,8 @@
 const crypto = require('crypto')
-const bcrypt = require('bcrypt')
+const crypt = require('crypt3/sync')
 const sprintf = require('sprintf-js').sprintf
 const uniqid = require('uniqid')
-function crypt(s1,s2){
-    return bcrypt.hash(s1,s2)
-}
+
 function mt_rand (min, max) { // eslint-disable-line camelcase
     //  discuss at: https://locutus.io/php/mt_rand/
     // original by: Onno Marsman (https://twitter.com/onnomarsman)
