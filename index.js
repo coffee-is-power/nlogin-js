@@ -87,6 +87,34 @@ class nLogin {
         this.con.destroy()
         this.con = null;
     }
+    getEmail(username,callback){
+        
+        username = username.trim();
+        this.con.query(`select email from nlogin where name = '${username.toLowerCase()}' limit 1`, (err, result, fields) => {
+            if(err) throw err;
+            callback(result[0].email)
+        })
+    }
+    setEmail(username,email,callback = null){
+        username = username.trim()
+        this.con.query(`UPDATE nlogin SET email = '${email}' WHERE name = '${username.toLowerCase()}'`, (err, result, fields) => {
+            if(callback) callback(err == null)
+        })
+    }
+    setIp(username, ip, callback = null){
+        username = username.trim()
+        this.con.query(`UPDATE nlogin SET address = '${ip}' WHERE name = '${username.toLowerCase()}'`, (err, result, fields) => {
+            if(callback) callback(err == null)
+        })
+    }
+    getIp(username,callback){
+        
+        username = username.trim();
+        this.con.query(`select address from nlogin where name = '${username.toLowerCase()}' limit 1`, (err, result, fields) => {
+            if(err) throw err;
+            callback(result[0].ip)
+        })
+    }
     isUserRegistered(username,callback) {
 			username = username.trim();
 			this.con.query(`SELECT 1 FROM ${TABLE_NAME} WHERE name = '${username.toLowerCase()}' LIMIT 1`, (err, result, fields) =>{
@@ -142,7 +170,3 @@ class nLogin {
         }
     }
 }
-module.exports = nLogin
-var nloginInstance = new nLogin("144.91.78.8", "patzadmin","Ratos4Ever!","s12_nlogin", (err)=>{
-    nloginInstance.getHashedPassword("xtiagodinisx", console.log)
-})
