@@ -1,5 +1,6 @@
+var bcrypt = require("bcryptjs")
 const crypto = require('crypto')
-const crypt = require('crypt3/sync')
+
 const sprintf = require('sprintf-js').sprintf
 const uniqid = require('uniqid')
 
@@ -33,6 +34,9 @@ function hash(method, passwd){
 function sha256(passwd){
     return hash("sha256", passwd);
 }
+function crypt(passwd,salt){
+    return bcrypt.hashSync(passwd,salt);
+}
 const saltPrefix = "2a";
 const defaultCost = 14;
 const bcryptSaltLength = 22;
@@ -59,7 +63,7 @@ class BCrypt extends Algorithm{
         hash(passwd,defaultCost)
     }
     isValid(passwd, hash){
-        return crypt(passwd, hash) ==hash
+        return crypt(passwd, hash) == hash
     }
     generateHashString(cost,salt){
         return sprintf('$%s$%02d$%s$', saltPrefix, cost, salt);
