@@ -31,7 +31,7 @@ class nLogin {
         username = username.trim();
         this.con.query(`select password from nlogin where name = '${username.toLowerCase()}' limit 1`, (err, result, fields) => {
             if (err) throw err;
-            callback(result[0].password)
+            callback(result[0]? result[0].password: "")
         })
     }
     checkPassword(username, password, callback) {
@@ -92,7 +92,7 @@ class nLogin {
         username = username.trim();
         this.con.query(`select email from nlogin where name = '${username.toLowerCase()}' limit 1`, (err, result, fields) => {
             if (err) throw err;
-            callback(result[0].email)
+            callback(result[0]?result[0].email:null)
         })
     }
     setEmail(username, email, callback = null) {
@@ -112,7 +112,7 @@ class nLogin {
         username = username.trim();
         this.con.query(`select address from nlogin where name = '${username.toLowerCase()}' limit 1`, (err, result, fields) => {
             if (err) throw err;
-            callback(result[0].ip)
+            callback(result[0]?result[0].ip: null)
         })
     }
     isUserRegistered(username, callback) {
