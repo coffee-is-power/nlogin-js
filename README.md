@@ -25,7 +25,7 @@ It will return a class, so you need to create a new instance
 
 const  nloginInstance = new  nLogin("localhost", "tiagodinis33","password123","s12_nlogin", (err)=>{
 
-console.log(err != null? "Connected!" : "Error connecting!")
+console.log(err == null? "Connected!" : "Error connecting!")
 
 })
 
