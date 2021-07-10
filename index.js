@@ -15,8 +15,6 @@ class nLogin {
             database: database
         })
         this.con.connect((err) => {
-            if (err) throw err;
-            console.log("Connected");
             callback(err)
         })
     }
