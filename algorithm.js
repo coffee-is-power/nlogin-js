@@ -4,25 +4,68 @@ const crypto = require('crypto')
 const sprintf = require('sprintf-js').sprintf
 const uniqid = require('uniqid')
 
-function mt_rand (min, max) { // eslint-disable-line camelcase
-    //  discuss at: https://locutus.io/php/mt_rand/
-    // original by: Onno Marsman (https://twitter.com/onnomarsman)
-    // improved by: Brett Zamir (https://brett-zamir.me)
-    //    input by: Kongo
-    //   example 1: mt_rand(1, 1)
-    //   returns 1: 1
-    const argc = arguments.length
+/*
+Generating random numbers in specific range using crypto.randomBytes from crypto library
+Maximum available range is 281474976710655 or 256^6-1
+Maximum number for range must be equal or less than Number.MAX_SAFE_INTEGER (usually 9007199254740991)
+Usage examples:
+cryptoRandomNumber(0, 350);
+cryptoRandomNumber(556, 1250425);
+cryptoRandomNumber(0, 281474976710655);
+cryptoRandomNumber((Number.MAX_SAFE_INTEGER-281474976710655), Number.MAX_SAFE_INTEGER);
+
+Tested and working on 64bit Windows and Unix operation systems.
+*/
+function cryptoRandomNumber(min, max) {
+    const argc = arguments.length;
     if (argc === 0) {
       min = 0
       max = 2147483647
     } else if (argc === 1) {
-      throw new Error('Warning: mt_rand() expects exactly 2 parameters, 1 given')
+      throw new Error('Warning: cryptoRandomNumber() expects exactly 2 parameters, 1 given')
     } else {
       min = parseInt(min, 10)
       max = parseInt(max, 10)
     }
-    return Math.floor(Math.random() * (max - min + 1)) + min
-  }
+    var distance = max - min;
+    if (min >= max) {
+      throw new Error('Warning: cryptoRandomNumber() minimum number should be less than maximum');
+    } else if (distance > 281474976710655) {
+      throw new Error('Warning: cryptoRandomNumber() range is greater than 256^6-1');
+    } else if (max > Number.MAX_SAFE_INTEGER) {
+      throw new Error('Warning: cryptoRandomNumber() maximum number should be safe integer limit');
+    } else {
+      var maxBytes = 6;
+      var maxDec = 281474976710656;
+      
+      // To avoid huge mathematical operations and increase function performance for small ranges
+      if (distance < 256) {
+        maxBytes = 1;
+        maxDec = 256;
+      } else if (distance < 65536) {
+        maxBytes = 2;
+        maxDec = 65536;
+      } else if (distance < 16777216) {
+        maxBytes = 3;
+        maxDec = 16777216;
+      } else if (distance < 4294967296) {
+        maxBytes = 4;
+        maxDec = 4294967296;
+      } else if (distance < 1099511627776) {
+        maxBytes = 4;
+        maxDec = 1099511627776;
+      }
+	
+      var randbytes = parseInt(crypto.randomBytes(maxBytes).toString('hex'), 16);
+      var result = Math.floor(randbytes/maxDec*(max-min+1)+min);
+		
+      if (result > max) {
+         result = max;
+      }
+      return result;
+    }
+}
+  
 class Algorithm{
     hash(passwd){}
     isValid(passwd, hash){}
@@ -45,7 +88,7 @@ function base64_encode(str){
 }
 class BCrypt extends Algorithm{
     generateRandomSalt(){
-        const seed  = uniqid(mt_rand())
+        const seed  = uniqid(cryptoRandomNumber())
         var salt = base64_encode(seed)
         salt.replace("+", ".")
         return salt.substr(0, bcryptSaltLength)
@@ -94,7 +137,7 @@ class AuthMe extends Algorithm{
         const maxCharIndex= 15;
         var salt = "";
         for(var i=0; i<SALT_LENGTH; i++){
-            salt+=this.CHARS[mt_rand(0,maxCharIndex)]
+            salt+=this.CHARS[cryptoRandomNumber(0,maxCharIndex)]
         }
         return salt;
     }
@@ -114,7 +157,7 @@ class SHA256 extends Algorithm{
         const maxCharIndex = sha256chars.length-1
         var salt = "";
         for(var i=0; i<sha256saltLength; i++){
-            salt += sha256chars[mt_rand(0,maxCharIndex)]
+            salt += sha256chars[cryptoRandomNumber(0,maxCharIndex)]
         }
         return salt
     }
