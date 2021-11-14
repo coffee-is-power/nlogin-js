@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tiagodinis33/nlogin-js.git"
+    "url": "git+https://gitlab.com/tiagodinis33/nlogin-js.git"
   },
   "keywords": [
     "nlogin",
@@ -19,9 +19,9 @@
   "author": "tiagodinis33",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/tiagodinis33/nlogin-js/issues"
+    "url": "https://gitlab.com/tiagodinis33/nlogin-js/-/issues"
   },
-  "homepage": "https://github.com/tiagodinis33/nlogin-js#readme",
+  "homepage": "https://gitlab.com/tiagodinis33/nlogin-js",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "mysql": "^2.18.1",
