@@ -69,12 +69,10 @@ class nLogin {
             case "SHA256":
                 return this.sha256;
 
+            case "SHA":
+                return this.authme;
+
             default:
-                var needle = '$AUTHME';
-                var length = needle.length;
-                if (length && hashed_pass.substr(hashed_pass.length - length) === needle) {
-                    return this.authme;
-                }
                 return null;
         }
     }
