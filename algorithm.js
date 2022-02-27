@@ -151,7 +151,7 @@ const sha256saltLength = 24
 class SHA256 extends Algorithm{
     hash(passwd){
         const salt = generateSalt()
-        return `$SHA256$${sha256(sha256(passwd) + salt)}@${salt}`
+        return `$SHA256$${sha256(sha256(passwd) + salt)}$${salt}`
     }
     generateSalt(){
         const maxCharIndex = sha256chars.length-1
@@ -163,8 +163,16 @@ class SHA256 extends Algorithm{
     }
     isValid(passwd, hash){
         var parts = hash.split("$")
-        var saltParts = hash.split("@")
-        return parts.length == 3 && saltParts.length == 2 && parts[2] == sha256(sha256(passwd)+saltParts[1])
+        switch(parts.length) {
+            case 3:
+                var saltParts = hash.split("@");
+                var salt = saltParts[1];
+                return parts[2] + "@" + salt == sha256(sha256(passwd)+salt)
+            case 4:
+                return parts[2] == sha256(sha256(passwd)+parts[3])
+            default:
+                return false
+        }
     }
 }
 module.exports = {
