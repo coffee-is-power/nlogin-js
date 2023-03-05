@@ -72,7 +72,7 @@ function crypt(passwd: string, salt: string) {
 }
 const SALT_PREFIX = "2a";
 const DEFAULT_COST = 14;
-export let BCrypt = {
+export const BCrypt = {
     hash(passwd: string, cost: number = DEFAULT_COST): string {
         const salt = crypto.randomBytes(11).toString("hex");
         const hashString = this.generateHashString(cost, salt)
@@ -86,7 +86,7 @@ export let BCrypt = {
     }
 }
 const AUTHME_CHARS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, "a", "b", "c", "d", "e", "f"];
-export let AuthMe = {
+export const AuthMe = {
     hash(passwd: string) {
         let salt = this.generateSalt()
         return `$SHA$${salt}$${sha256(sha256(passwd) + salt)}$AUTHME`
@@ -109,7 +109,7 @@ export let AuthMe = {
 }
 const SHA256_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 const SHA256_SALT_LENGTH = 24
-export let SHA256 = {
+export const SHA256 = {
     hash(passwd: string) {
         const salt = this.generateSalt()
         return `$SHA256$${sha256(sha256(passwd) + salt)}$${salt}`
@@ -141,7 +141,7 @@ function sha512(passwd: string) {
 }
 const sha512chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 const sha512saltLength = 24
-export let SHA512 = {
+export const SHA512 = {
     hash(passwd: string) {
         const salt = this.generateSalt()
         return `$SHA512$${sha512(sha512(passwd) + salt)}$${salt}`
