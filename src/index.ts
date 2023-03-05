@@ -27,7 +27,7 @@ class nLogin {
     /**
      * Retrieves the hash associated with the given user from the database.
      */
-    getHashedPassword(username: string): Promise<string> {
+    async getHashedPassword(username: string): Promise<string> {
         return new Promise((resolve, reject) => {
             username = username.trim();
             this.pool.query(`select password from nlogin where name = '${username.toLowerCase()}' limit 1`, (err, result, fields) => {
@@ -36,21 +36,15 @@ class nLogin {
             })
         })
     }
-    checkPassword(username: string, password: string): Promise<boolean> {
-        return this.getHashedPassword(username).then((hash) => {
-            if (hash) {
-                let algorithm = this.detectAlgorithm(hash);
-                if (algorithm) {
-                    return algorithm.isValid(password, hash)
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        });
-
-
+    async checkPassword(username: string, password: string): Promise<boolean> {
+        let hashedPassword = await this.getHashedPassword(username);
+        let algorithm = this.detectAlgorithm(hashedPassword);
+        if (algorithm) {
+            return algorithm.isValid(password, hashedPassword)
+        } else {
+            let algo = (hashedPassword.includes("$") ? hashedPassword.split("$")[1] : '').toUpperCase();
+            throw new Error(`Unknown hashing method: "${algo}"`)
+        }
     }
 
     /**
