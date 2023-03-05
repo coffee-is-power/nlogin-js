@@ -1,16 +1,27 @@
 import mysql from "mysql";
-import { BCrypt, SHA256, AuthMe, Algorithm } from "./algorithm.js"
+import { BCrypt, SHA512, SHA256, AuthMe, Algorithm } from "./algorithm.js"
 
 
 const TABLE_NAME = 'nlogin'
 class nLogin {
-    bcrypt: BCrypt = new BCrypt();
-    sha256: SHA256 = new SHA256();
-    authme: AuthMe = new AuthMe();
-    def_algo: Algorithm = this.bcrypt;
+    def_algo: Algorithm = BCrypt;
     pool: mysql.Pool;
-    constructor(options: mysql.PoolConfig) {
+    constructor(options: string | mysql.PoolConfig, hashing_method?: "bcrypt" | "authme" | "sha256" | "sha512") {
         this.pool = mysql.createPool(options);
+        switch (hashing_method) {
+            case "authme":
+                this.def_algo = AuthMe;
+                break;
+            case "bcrypt":
+                this.def_algo = BCrypt;
+                break;
+            case "sha256":
+                this.def_algo = SHA256;
+                break;
+            case "sha512":
+                this.def_algo = SHA512;
+                break;
+        }
     }
 
     /**
@@ -50,7 +61,7 @@ class nLogin {
         switch (algo) {
             case '2':
             case '2A':
-                return this.bcrypt;
+                return BCrypt;
 
             case "PBKDF2":
                 // will be added
@@ -61,10 +72,10 @@ class nLogin {
                 return null;
 
             case "SHA256":
-                return this.sha256;
+                return SHA256;
 
             case "SHA":
-                return this.authme;
+                return AuthMe;
 
             default:
                 return null;

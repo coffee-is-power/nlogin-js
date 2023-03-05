@@ -11,6 +11,8 @@
     "outDir": "dist/",
     "moduleResolution": "node",
     "noImplicitReturns": true,
-    "declaration": true
-  }
+    "declaration": true,
+    "lib": ["ES2022"]
+  },
+  "exclude": ["**/*.spec.ts", "jest.config.ts", "dist/"]
 }
