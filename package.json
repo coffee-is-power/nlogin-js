@@ -2,7 +2,8 @@
   "name": "nlogin",
   "version": "1.2.2",
   "description": "NLogin database wrapper for node js",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -23,9 +24,16 @@
   },
   "homepage": "https://gitlab.com/tiagodinis33/nlogin-js",
   "dependencies": {
-    "bcryptjs": "^2.4.3",
     "mysql": "^2.18.1",
     "sprintf-js": "^1.1.2",
-    "uniqid": "^5.3.0"
+    "uniqid": "^5.4.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/mysql": "^2.15.21",
+    "@types/node": "^18.14.6",
+    "@types/uniqid": "^5.3.2",
+    "bcryptjs": "^2.4.3",
+    "typescript": "^4.9.5"
   }
 }
