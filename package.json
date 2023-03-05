@@ -1,6 +1,6 @@
 {
   "name": "nlogin",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "description": "✨ Integrate nLogin into your app ✨",
   "main": "dist/index.js",
   "type": "module",
